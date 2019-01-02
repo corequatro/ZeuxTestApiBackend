@@ -3,3 +3,5 @@
 ################################################################################
 
 /ZeuxApiBackend/obj
+/.vs
+/ZeuxApiBackend/bin/Debug/netcoreapp2.1
