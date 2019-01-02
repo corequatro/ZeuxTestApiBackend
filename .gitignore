@@ -5,3 +5,7 @@
 /ZeuxApiBackend/obj
 /.vs
 /ZeuxApiBackend/bin/Debug/netcoreapp2.1
+/ZeuxApiServer/bin/Debug/netcoreapp2.2
+/ZeuxApiServer/obj
+/ZeuxApiTests/bin/Debug/netcoreapp2.2
+/ZeuxApiTests/obj
