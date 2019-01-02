@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ZeuxApiServer.Model;
-using ZeuxApiServer.Model.UserAssetsApiController;
+using ZeuxApiServer.Interface.UserAssets;
+using ZeuxApiServer.Model.UserAssetsService;
 
 namespace ZeuxApiServer.Controllers
 {
@@ -12,12 +9,18 @@ namespace ZeuxApiServer.Controllers
     [ApiController]
     public class UserAssetsApiController : Controller
     {
+        private readonly IUserAssetsService _assetsService;
+        public UserAssetsApiController(IUserAssetsService assetsService)
+        {
+            _assetsService = assetsService;
+        }
+
         [Route("getAsync")]
         [HttpGet]
         public async Task<JsonResult> GetAsync([FromQuery]UserAssetsFilter filter)
         {
-            return Json("test result");
+            var list = await _assetsService.GetUserAssets(filter);
+            return Json(list);
         }
-
     }
 }

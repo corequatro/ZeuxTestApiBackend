@@ -12,7 +12,19 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\UserAssetsApiController\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dal\ZeuxApiServer.Dal.csproj" />
+    <ProjectReference Include="..\Services\ZeuxApiServer.Services.csproj" />
+    <ProjectReference Include="..\ZeuxApiServer.Interface\ZeuxApiServer.Interface.csproj" />
+    <ProjectReference Include="..\ZeuxApiServer.Model\ZeuxApiServer.Model.csproj" />
   </ItemGroup>
 
 </Project>

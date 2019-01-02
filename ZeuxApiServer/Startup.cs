@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,9 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ZeuxApiServer.Configuration;
+using ZeuxApiServer.Dal;
+using ZeuxApiServer.Interface;
+using ZeuxApiServer.Interface.UserAssets;
+using ZeuxApiServer.Model;
+using ZeuxApiServer.Services;
 
 namespace ZeuxApiServer
 {
@@ -28,7 +28,6 @@ namespace ZeuxApiServer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureSwaggerService(services);
@@ -41,6 +40,9 @@ namespace ZeuxApiServer
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddScoped(typeof(IDal<>), typeof(DalDummy<>));
+            services.AddScoped<IUserAssetsService, UserAssetsService>();
 
             services.Configure<JwtAuthentication>(Configuration.GetSection("JwtAuthentication"));
             services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();

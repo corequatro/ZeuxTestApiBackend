@@ -3,10 +3,11 @@
 // // Bogdan Lyashenko
 // // corequatro@gmail.com
 
-namespace ZeuxApiServer.Model.UserAssetsApiController
+namespace ZeuxApiServer.Model.UserAssetsService
 {
     public class UserAssetsFilter
     {
-        
+        public ProductTypeEnum? ProductType { get; set; }
+
     }
 }

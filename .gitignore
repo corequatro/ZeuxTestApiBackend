@@ -9,3 +9,12 @@
 /ZeuxApiServer/obj
 /ZeuxApiTests/bin/Debug/netcoreapp2.2
 /ZeuxApiTests/obj
+/Dal/bin/Debug/netcoreapp2.2
+/Dal/obj
+/IDal/obj
+/Services/bin/Debug/netcoreapp2.2
+/Services/obj
+/ZeuxApiServer.Interface/bin/Debug/netstandard2.0
+/ZeuxApiServer.Interface/obj
+/ZeuxApiServer.Model/bin/Debug/netstandard2.0
+/ZeuxApiServer.Model/obj

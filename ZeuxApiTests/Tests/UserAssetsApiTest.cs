@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using ZeuxApiServer.Model.UserAssetsService;
 using ZeuxApiServer.Model.UserAuthApi;
 using ZeuxApiTests.Base;
 
@@ -31,6 +32,29 @@ namespace ZeuxApiTests.Tests
 
         [Test]
         public async Task GetUserAssets_JwtTokenExsists_Success()
+        {
+            var response = await Client.PostAsync(UserLoginApiUrl("generateToken"), new StringContent(JsonConvert.SerializeObject(new GenerateTokenModel()
+            {
+                Username = "testUser",
+                Password = "testPassword"
+
+            }), Encoding.UTF8, "application/json"));
+            var resultStr = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<dynamic>(resultStr);
+            var token = result.token.Value;
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
+            var assetsResponse = await Client.GetAsync(UserAssetsApiUrl("getAsync"));
+            Assert.AreEqual(HttpStatusCode.OK, assetsResponse.StatusCode);
+        }
+
+
+
+        [TestCase(ProductTypeEnum.Funds,5)]
+        [TestCase(ProductTypeEnum.P2P,5)]
+        [TestCase(ProductTypeEnum.Savings, 5)]
+        [TestCase(null, 15)]
+        [Test]
+        public async Task GetUserAssets_FilteredByType_CorrectAmmountReturnedForEachCase(ProductTypeEnum? typeIEnum,int count)
         {
             var response = await Client.PostAsync(UserLoginApiUrl("generateToken"), new StringContent(JsonConvert.SerializeObject(new GenerateTokenModel()
             {
