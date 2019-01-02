@@ -14,11 +14,13 @@ namespace ZeuxApiTests.Tests
         }
 
         [Test]
-        public async Task GetUserAssets_Filtered_Success()
+        public async Task GetUserAssets_NoJwtToken_Unauthorized()
         {
             var response = await Client.GetAsync(UserAssetsApiUrl("getAsync"));
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
+
 
     }
 }

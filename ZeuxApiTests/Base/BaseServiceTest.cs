@@ -38,7 +38,7 @@ namespace ZeuxApiTests.Base
             var webHostBuilder = WebHost.CreateDefaultBuilder();
             webHostBuilder.UseContentRoot(Directory.GetCurrentDirectory());
             webHostBuilder.UseStartup<Startup>();
-            webHostBuilder.UseConfiguration(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).Build());
+            webHostBuilder.UseConfiguration(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
             return new TestServer(webHostBuilder);
         }
     }
