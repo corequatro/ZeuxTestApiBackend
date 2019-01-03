@@ -11,7 +11,7 @@ using ZeuxApiServer.Configuration;
 using ZeuxApiServer.Dal;
 using ZeuxApiServer.Interface;
 using ZeuxApiServer.Interface.UserAssets;
-using ZeuxApiServer.Model;
+using ZeuxApiServer.Interface.UserAuthService;
 using ZeuxApiServer.Services;
 
 namespace ZeuxApiServer
@@ -43,7 +43,7 @@ namespace ZeuxApiServer
 
             services.AddScoped(typeof(IDal<>), typeof(DalDummy<>));
             services.AddScoped<IUserAssetsService, UserAssetsService>();
-
+            services.AddScoped<IUserAuthService, UserAuthService>();
             services.Configure<JwtAuthentication>(Configuration.GetSection("JwtAuthentication"));
             services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();

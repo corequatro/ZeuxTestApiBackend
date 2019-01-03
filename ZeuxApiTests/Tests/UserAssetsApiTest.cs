@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -31,6 +33,22 @@ namespace ZeuxApiTests.Tests
         }
 
         [Test]
+        public async Task GetUserAssets_JwtTokenExsistsNotValid_Unauthorized()
+        {
+            var response = await Client.PostAsync(UserLoginApiUrl("generateToken"), new StringContent(JsonConvert.SerializeObject(new GenerateTokenModel()
+            {
+                Username = "testUser",
+                Password = "testPassword"
+
+            }), Encoding.UTF8, "application/json"));
+            var resultStr = await response.Content.ReadAsStringAsync();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, Guid.NewGuid().ToString());
+            var assetsResponse = await Client.GetAsync(UserAssetsApiUrl("getAsync"));
+            Assert.AreEqual(HttpStatusCode.Unauthorized, assetsResponse.StatusCode);
+        }
+
+
+        [Test]
         public async Task GetUserAssets_JwtTokenExsists_Success()
         {
             var response = await Client.PostAsync(UserLoginApiUrl("generateToken"), new StringContent(JsonConvert.SerializeObject(new GenerateTokenModel()
@@ -47,27 +65,28 @@ namespace ZeuxApiTests.Tests
             Assert.AreEqual(HttpStatusCode.OK, assetsResponse.StatusCode);
         }
 
-
-
-        [TestCase(ProductTypeEnum.Funds,5)]
-        [TestCase(ProductTypeEnum.P2P,5)]
+        [TestCase(ProductTypeEnum.Funds, 5)]
+        [TestCase(ProductTypeEnum.P2P, 5)]
         [TestCase(ProductTypeEnum.Savings, 5)]
         [TestCase(null, 15)]
         [Test]
-        public async Task GetUserAssets_FilteredByType_CorrectAmmountReturnedForEachCase(ProductTypeEnum? typeIEnum,int count)
+        public async Task GetUserAssets_FilteredByType_CorrectAmmountReturnedForEachCase(ProductTypeEnum? typeIEnum, int count)
         {
             var response = await Client.PostAsync(UserLoginApiUrl("generateToken"), new StringContent(JsonConvert.SerializeObject(new GenerateTokenModel()
             {
                 Username = "testUser",
                 Password = "testPassword"
-
             }), Encoding.UTF8, "application/json"));
+
             var resultStr = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<dynamic>(resultStr);
             var token = result.token.Value;
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
-            var assetsResponse = await Client.GetAsync(UserAssetsApiUrl("getAsync"));
+            var assetsResponse = await Client.GetAsync(UserAssetsApiUrl("getAsync") + "?productType=" + typeIEnum);
+            var responseItemHtml = await assetsResponse.Content.ReadAsStringAsync();
+            var itemResult = JsonConvert.DeserializeObject<List<UserAsset>>(responseItemHtml);
             Assert.AreEqual(HttpStatusCode.OK, assetsResponse.StatusCode);
+            Assert.AreEqual(count, itemResult.Count);
         }
     }
 }

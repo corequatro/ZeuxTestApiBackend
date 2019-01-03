@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Middleware\" />
     <Folder Include="Model\UserAssetsApiController\" />
   </ItemGroup>
 

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using ZeuxApiServer.Configuration;
+using ZeuxApiServer.Interface.UserAuthService;
 using ZeuxApiServer.Model.UserAuthApi;
 
 namespace ZeuxApiServer.Controllers
@@ -20,34 +21,43 @@ namespace ZeuxApiServer.Controllers
     public class UserAuthApiController : Controller
     {
         private readonly IOptions<JwtAuthentication> _jwtAuthentication;
+        private readonly IUserAuthService _authService;
 
-        public UserAuthApiController(IOptions<JwtAuthentication> jwtAuthentication)
+
+        public UserAuthApiController(IOptions<JwtAuthentication> jwtAuthentication, IUserAuthService authService)
         {
             _jwtAuthentication = jwtAuthentication;
+            _authService = authService;
         }
 
 
         [Route("generateToken")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<JsonResult> PostAsync([FromBody]GenerateTokenModel model)
+        public async Task<IActionResult> PostAsync([FromBody]GenerateTokenModel model)
         {
-            var token = new JwtSecurityToken(
-                     issuer: _jwtAuthentication.Value.ValidIssuer,
-                     audience: _jwtAuthentication.Value.ValidAudience,
-                     claims: new[]
-                     {
-                   new Claim(JwtRegisteredClaimNames.Sub, model.Username),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                     },
-                     expires: DateTime.UtcNow.AddDays(30),
-                     notBefore: DateTime.UtcNow,
-                     signingCredentials: _jwtAuthentication.Value.SigningCredentials);
-
-            return Json(new
+            if (await _authService.HasCorrectCredentials(model.Username, model.Password))
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
-            });
+                var token = new JwtSecurityToken(
+                    issuer: _jwtAuthentication.Value.ValidIssuer,
+                    audience: _jwtAuthentication.Value.ValidAudience,
+                    claims: new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, model.Username),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    },
+                    expires: DateTime.UtcNow.AddDays(30),
+                    notBefore: DateTime.UtcNow,
+                    signingCredentials: _jwtAuthentication.Value.SigningCredentials);
+
+                return Json(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                });
+            }
+
+            return UnprocessableEntity();
+
         }
     }
 }
