@@ -30,7 +30,7 @@ namespace ZeuxApiServer.Controllers
             _authService = authService;
         }
 
-
+        //TODO we can use Identity server to auth instead. But for that I need more time. 
         [Route("generateToken")]
         [HttpPost]
         [AllowAnonymous]

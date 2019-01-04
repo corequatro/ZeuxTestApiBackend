@@ -31,6 +31,12 @@ namespace ZeuxApiServer
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureSwaggerService(services);
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddMvc(config =>
             {
@@ -51,6 +57,7 @@ namespace ZeuxApiServer
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors("MyPolicy");
             ConfigureSwaggerApp(app);
             if (env.IsDevelopment())
             {

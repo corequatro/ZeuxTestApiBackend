@@ -18,7 +18,7 @@ namespace ZeuxApiServer.Dal
                 var typeslist = Enum.GetValues(typeof(ProductTypeEnum)).Cast<ProductTypeEnum>().ToList();
                 foreach (var type in typeslist)
                 {
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 10; i++)
                     {
                         list.Add(new UserAsset
                         {

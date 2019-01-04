@@ -65,10 +65,10 @@ namespace ZeuxApiTests.Tests
             Assert.AreEqual(HttpStatusCode.OK, assetsResponse.StatusCode);
         }
 
-        [TestCase(ProductTypeEnum.Funds, 5)]
-        [TestCase(ProductTypeEnum.P2P, 5)]
-        [TestCase(ProductTypeEnum.Savings, 5)]
-        [TestCase(null, 15)]
+        [TestCase(ProductTypeEnum.Funds, 10)]
+        [TestCase(ProductTypeEnum.P2P, 10)]
+        [TestCase(ProductTypeEnum.Savings, 10)]
+        [TestCase(null, 30 )]
         [Test]
         public async Task GetUserAssets_FilteredByType_CorrectAmmountReturnedForEachCase(ProductTypeEnum? typeIEnum, int count)
         {
