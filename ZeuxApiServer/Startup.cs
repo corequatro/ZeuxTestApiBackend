@@ -12,6 +12,7 @@ using ZeuxApiServer.Dal;
 using ZeuxApiServer.Interface;
 using ZeuxApiServer.Interface.UserAssets;
 using ZeuxApiServer.Interface.UserAuthService;
+using ZeuxApiServer.Middleware;
 using ZeuxApiServer.Services;
 
 namespace ZeuxApiServer
@@ -31,21 +32,14 @@ namespace ZeuxApiServer
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureSwaggerService(services);
-            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
-
             services.AddMvc(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                 {
+                     var policy = new AuthorizationPolicyBuilder()
+                         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                         .RequireAuthenticatedUser()
+                         .Build();
+                     config.Filters.Add(new AuthorizeFilter(policy));
+                 }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddScoped(typeof(IDal<>), typeof(DalDummy<>));
             services.AddScoped<IUserAssetsService, UserAssetsService>();
@@ -57,12 +51,14 @@ namespace ZeuxApiServer
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors("MyPolicy");
+
+            app.UseOptions();
             ConfigureSwaggerApp(app);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
 
             app.UseMvc();
         }
